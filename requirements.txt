@@ -1,0 +1,9 @@
+Flask
+Django
+pandas
+BeautifulSoup4
+Scrapy
+NLTK
+spaCy
+scikit-learn
+tensorflow
