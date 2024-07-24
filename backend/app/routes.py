@@ -50,11 +50,12 @@ def webhook():
     intent_name = req.get('queryResult').get('intent').get('displayName')
 
     welcome_responses = [
-        "Hi! How are you doing?",
-        "Hello! How can I help you?",
-        "Good day! What can I do for you today?",
-        "Greetings! How can I assist?",
-        "Hey! How can I help you today?"
+        "This is a test response."
+        # "Hi! How are you doing?",
+        # "Hello! How can I help you?",
+        # "Good day! What can I do for you today?",
+        # "Greetings! How can I assist?",
+        # "Hey! How can I help you today?"
     ]
 
     if intent_name == 'Default Welcome Intent':
