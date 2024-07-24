@@ -17,6 +17,8 @@ def create_user():
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.json
+    if not data or 'message' not in data:
+        return jsonify({"error": "Invalid input"}), 400
     user_message = data.get('message')
     # Implement your NLP logic here to generate a response
     response = "This is a dummy response"  # Replace this with actual logic
