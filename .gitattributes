@@ -1,3 +1,2 @@
 cleaned_reddit_corpus/* filter=lfs diff=lfs merge=lfs -text
-reddit-corpus-small/* filter=lfs diff=lfs merge=lfs -text
 nlp/reddit-corpus-small/* filter=lfs diff=lfs merge=lfs -text
