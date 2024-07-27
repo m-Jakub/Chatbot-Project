@@ -19,6 +19,8 @@ def create_user():
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.json
+    if not data or 'message' not in data:
+        return jsonify({"error": "Invalid input"}), 400
     user_message = data.get('message')
     # Dialogflow session ID (you can use any string, but it should be unique for each user)
     session_id = str(uuid.uuid4())
