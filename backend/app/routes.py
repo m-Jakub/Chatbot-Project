@@ -57,8 +57,8 @@ def webhook():
     ]
 
     book_responses = [
-        "This is a test response."
-        # "As a bot, I don't read, but I've heard great things about 'Mistborn' series."
+        "As a bot, I don't read, but I've heard great things about 'Mistborn' series. Have you read it?",
+        f"Oh, I love {book}! It's a great read!"
     ]
 
     hobby_responses = [
@@ -78,8 +78,9 @@ def webhook():
         import random
         response_text = random.choice(welcome_responses)
     elif intent_name == 'Favourite Book Intent':
+        book = parameters.get('book')
         import random
-        response_text = random.choice(book_responses)
+        response_text = random.choice(book_responses).replace("$book", book)
     elif intent_name == 'Hobby Discussion Intent':
         import random
         response_text = random.choice(hobby_responses)
