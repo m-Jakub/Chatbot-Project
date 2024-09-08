@@ -19,8 +19,6 @@ def create_user():
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.json
-    if not data or 'message' not in data:
-        return jsonify({"error": "Invalid input"}), 400
     user_message = data.get('message')
     # Dialogflow session ID (you can use any string, but it should be unique for each user)
     session_id = str(uuid.uuid4())
@@ -49,8 +47,6 @@ def chat():
 def webhook():
     req = request.get_json(silent=True, force=True)
 
-    intent_name = req.get('queryResult').get('intent').get('displayName')
-
     welcome_responses = [
         "This is a test response."
         # "Hi! How are you doing?",
@@ -60,9 +56,38 @@ def webhook():
         # "Hey! How can I help you today?"
     ]
 
+    book_responses = [
+        "As a bot, I don't read, but I've heard great things about 'Mistborn' series. Have you read it?",
+        f"Oh, I love {book}! It's a great read!"
+    ]
+
+    hobby_responses = [
+        "This is a test response."
+        # "I enjoy learning new things and chatting with you!"
+    ]
+
+    interest_responses = [
+        "That's cool! How often do you go $interest-type?",
+        "$interest-type sounds fun! What do you usually do when you $interest-type?"
+    ]
+
+    intent_name = req.get('queryResult').get('intent').get('displayName')
+    parameters = req.get('queryResult').get('parameters')
+
     if intent_name == 'Default Welcome Intent':
         import random
         response_text = random.choice(welcome_responses)
+    elif intent_name == 'Favourite Book Intent':
+        book = parameters.get('book')
+        import random
+        response_text = random.choice(book_responses).replace("$book", book)
+    elif intent_name == 'Hobby Discussion Intent':
+        import random
+        response_text = random.choice(hobby_responses)
+    elif intent_name == 'Interest Inquiry':
+        interest_type = parameters.get('interest-type')
+        import random
+        response_text = random.choice(interest_responses).replace("$interest-type", interest_type)
     else:
         response_text = "Sorry, what was that?"
 
