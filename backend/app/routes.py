@@ -1,7 +1,11 @@
 import uuid
+import random
 from flask import jsonify, request
 from . import app
 import google.cloud.dialogflow as dialogflow
+
+from nlp.entity_recognition import extract_entities
+from nlp.intent_classification import classify_intent
 
 @app.route('/api/hello', methods=['GET'])
 def hello():
@@ -37,15 +41,28 @@ def chat():
     
     # Send the text input to Dialogflow
     response = session_client.detect_intent(session=session, query_input=query_input)
+    dialogflow_response_text = response.query_result.fulfillment_text
+    dialogflow_intent = response.query_result.intent.display_name
+
+    # Run NLP models (entity recognition and intent classification)
+    recognized_entities = extract_entities(user_message)
+    classified_intent = classify_intent(user_message)
     
     # Get the response text from Dialogflow
-    response_text = response.query_result.fulfillment_text
+    response_text = f"Dialogflow response: {dialogflow_response_text} \n"
+
+    if recognized_entities:
+        response_text += f"Recognized entities: {', ' .join(recognized_entities)} \n"
     
     return jsonify({'response': response_text})
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
     req = request.get_json(silent=True, force=True)
+    
+    intent_name = req.get('queryResult').get('intent').get('displayName')
+    user_message = req.get('queryResult').get('queryText')
+    parameters = req.get('queryResult').get('parameters')
 
     welcome_responses = [
         "This is a test response."
@@ -64,6 +81,9 @@ def webhook():
     hobby_responses = [
         "This is a test response."
         # "I enjoy learning new things and chatting with you!"
+        # "Hobbies are great! What's your favorite?",
+        # "I love talking about hobbies! What are you into?",
+        # "It's always fun to have hobbies. What do you enjoy doing?"
     ]
 
     interest_responses = [
@@ -71,25 +91,33 @@ def webhook():
         "$interest-type sounds fun! What do you usually do when you $interest-type?"
     ]
 
-    intent_name = req.get('queryResult').get('intent').get('displayName')
-    parameters = req.get('queryResult').get('parameters')
+    response_text = "Sorry, what was that?"
 
     if intent_name == 'Default Welcome Intent':
-        import random
         response_text = random.choice(welcome_responses)
+
     elif intent_name == 'Favourite Book Intent':
         book = parameters.get('book')
-        import random
         response_text = random.choice(book_responses).replace("$book", book)
+        # response_text = random.choice(book_responses).replace("{book}", book)
+
     elif intent_name == 'Hobby Discussion Intent':
-        import random
         response_text = random.choice(hobby_responses)
+
     elif intent_name == 'Interest Inquiry':
         interest_type = parameters.get('interest-type')
-        import random
         response_text = random.choice(interest_responses).replace("$interest-type", interest_type)
-    else:
-        response_text = "Sorry, what was that?"
+
+    # Enrich responses with entity recognition (from NLP model)
+    if recognized_entities:
+        response_text += f" By the way, I noticed you mentioned: {', '.join(recognized_entities)}."
+
+    # Enrich response based on classified intent (if relevant)
+    if classified_intent:
+        response_text += f" Your message seems to be about: {classified_intent}."
+
+    # else:
+    #     response_text = "Sorry, what was that?"
 
     return jsonify({
         "fulfillmentMessages": [
