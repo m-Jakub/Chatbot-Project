@@ -31,9 +31,12 @@ corpus_path = os.path.join(script_dir, 'reddit-corpus-small')
 if os.path.exists(corpus_path):
     corpus = Corpus(filename=corpus_path)
     for utterance in corpus.iter_utterances():
+        if not utterance.text.strip():  # Check if text is empty
+            continue
         clean_utterance = clean_text(utterance.text)
         preprocessed_utterance = preprocess_text(clean_utterance)
         utterance.text = preprocessed_utterance
+        
     corpus.dump(name='cleaned_reddit_corpus', base_path='./')
 else:
     print(f"File not found: {corpus_path}")

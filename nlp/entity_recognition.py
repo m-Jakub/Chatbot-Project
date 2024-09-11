@@ -3,7 +3,7 @@ import json
 
 nlp = spacy.load("en_core_web_sm")
 
-corpus_path = "cleaned_reddit_corpus/utterances.jsonl"
+corpus_path = "nlp/filtered_utterances.jsonl"
 
 utterances = []
 with open(corpus_path, "r") as f:
