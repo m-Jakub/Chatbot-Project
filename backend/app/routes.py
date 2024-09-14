@@ -3,6 +3,9 @@ import random
 from flask import jsonify, request
 from . import app
 import google.cloud.dialogflow as dialogflow
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from nlp.entity_recognition import extract_entities
 from nlp.intent_classification import classify_intent
@@ -64,6 +67,10 @@ def webhook():
     user_message = req.get('queryResult').get('queryText')
     parameters = req.get('queryResult').get('parameters')
 
+    # Extract entities from the user's message
+    recognized_entities = extract_entities(user_message)
+    classified_intent = classify_intent(user_message)
+
     welcome_responses = [
         "This is a test response."
         # "Hi! How are you doing?",
@@ -75,7 +82,7 @@ def webhook():
 
     book_responses = [
         "As a bot, I don't read, but I've heard great things about 'Mistborn' series. Have you read it?",
-        f"Oh, I love {book}! It's a great read!"
+        f"Oh, I love $book! It's a great read!"
     ]
 
     hobby_responses = [
@@ -97,8 +104,11 @@ def webhook():
         response_text = random.choice(welcome_responses)
 
     elif intent_name == 'Favourite Book Intent':
-        book = parameters.get('book')
-        response_text = random.choice(book_responses).replace("$book", book)
+        book = parameters.get("book")
+        if book:
+            response_text = random.choice(book_responses).replace("$book", book)
+        else:
+            response_text = "Could you tell me the name of the book?"
         # response_text = random.choice(book_responses).replace("{book}", book)
 
     elif intent_name == 'Hobby Discussion Intent':
