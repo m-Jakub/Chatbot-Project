@@ -1,3 +1,4 @@
 cleaned_reddit_corpus/* filter=lfs diff=lfs merge=lfs -text
 nlp/reddit-corpus-small/* filter=lfs diff=lfs merge=lfs -text
 nlp/annotated_entities.json filter=lfs diff=lfs merge=lfs -text
+nlp/filtered_utterances.jsonl filter=lfs diff=lfs merge=lfs -text
