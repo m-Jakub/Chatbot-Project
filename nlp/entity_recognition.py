@@ -24,24 +24,7 @@ annotated_entities = load_processed_entities()
 
 if not annotated_entities:
 
-    corpus_path = "nlp/filtered_utterances.jsonl"
-
-utterances = []
-with open(corpus_path, "r") as f:
-    for line in f:
-        utterances.append(json.loads(line))
-
-def extract_entities(text):
-        doc = nlp(text)
-        entities = [(ent.text, ent.label_) for ent in doc.ents]
-        return entities
-    
-# Load preprocessed data instead of reprocessing every time
-annotated_entities = load_processed_entities()
-
-if not annotated_entities:
-
-    corpus_path = "nlp/filtered_utterances.jsonl"
+    corpus_path = "nlp/filtered_utterences.jsonl"
 
     utterances = []
     with open(corpus_path, "r") as f:
