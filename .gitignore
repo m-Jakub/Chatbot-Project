@@ -2,3 +2,5 @@ chatbot-env/
 __pycache__/
 *.pyc
 .DS_Store
+annotated_entities_batch_*
+annotated_entities_final_batch.json
